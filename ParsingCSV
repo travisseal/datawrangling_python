@@ -38,4 +38,7 @@ def parse_csv(datafile):
 if __name__ == '__main__':
     parse_csv(DATAFILE)
     d = parse_csv(DATAFILE)
-    pprint.pprint(d)
+   # pprint.pprint(d)
+    #print specific element in the array of dictionaries.
+    for i in d:
+        print(i['Sex'])
