@@ -1,0 +1,3 @@
+Issues:
+
+Postal code contained zip+5. Solution was to truncate the +5 portion of the zip.
