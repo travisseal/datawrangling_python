@@ -1,8 +1,12 @@
-DATAFILE = ""
+import os
+import pprint
+import csv
+
+DATAFILE = "E:\Projects\Python\Intro DataScience\data\TitanicData.csv"
 
 def parse_file(datafile):
     data = []
-    with open (datafile, "rb") as f:
+    with open (datafile, 'r') as f:
         header = f.readline().split(",")
         header = 0
         counter = 0
@@ -20,3 +24,18 @@ def parse_file(datafile):
             counter +=1
 
         return data
+
+#this builds an array with dictionaries. k,v pairs
+def parse_csv(datafile):
+    data = []
+    n = 0
+    with open(datafile,'r') as sd:
+        r = csv.DictReader(sd)
+        for line in r: #line will be a dictionary
+            data.append(line)
+        return data
+
+if __name__ == '__main__':
+    parse_csv(DATAFILE)
+    d = parse_csv(DATAFILE)
+    pprint.pprint(d)
