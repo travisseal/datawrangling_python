@@ -11,7 +11,6 @@ import pandas as pd
 
 osm_file = open("E:\Projects\Python\Intro DataScience\data\south_carolina.osm","r", encoding='utf-8')
 wayDic = {}
-wayDf = pd.DataFrame(columns=['ID', 'TimeStamp', 'uid','changeset','ndref'])
 
 def auditWayTags():
     for event, elem in ET.iterparse(osm_file, events=("start",)):
@@ -28,18 +27,10 @@ def auditWayTags():
             for tag in elem.iter("nd"):
                 way.__setNDtag__(tag)
 
-            wayDf.loc[len(wayDf)] = [way.__getId__(), '06/2017', 'uid3', 'changedata','ref#']
-            #            wayDf['TagTags'] = way.__getTagTags__()
-
-
-            #wayDic.__setitem__(way.__getId__(),way.__getTagTags__())
-
-
+            wayDic.__setitem__(way.__getId__(),way.__getTagTags__())
 
 auditWayTags()
-#wayDf['id'] = wayDic.keys()
-#wayDf['values'] = wayDic.values()
-
-print(wayDf)
-
+wayDf = pd.DataFrame.from_dict(wayDic,'index')
+pprint.pprint(wayDf)
+wayDf.to_csv('C:\\Users\Travis\Desktop\output.csv')
 

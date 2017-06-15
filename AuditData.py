@@ -6,9 +6,10 @@ import pprint
 osm_file = open("E:\Projects\Python\Intro DataScience\data\south_carolina.osm","r", encoding='utf-8')
 
 street_type_re = re.compile(r'\b\S+\.?$',re.IGNORECASE)
-postcode_type_re = re.compile(r'29([0-9]).+',re.IGNORECASE)
-lower = re.compile(r'^([a-z]|_)*$') #zipcod that starts with 29
+postcode_type_re = re.compile(r'29([0-9]).+',re.IGNORECASE)#zipcod that starts with 29
+lower = re.compile(r'^([a-z]|_)*$')
 problemchars = re.compile(r'[=\+/&<>;\'"\?%#$@\,\. \t\r\n]')
+postTypesRegex = re.compile('zip|postal|postcode')
 street_types = defaultdict(set)
 postalCode_types = defaultdict(set)
 
@@ -40,7 +41,7 @@ def audit_postcode_type(postalCode_types,postalCode):
     if m:
         postal_types = m.group()
         if postalCode not in expected_postalCodes:
-            postalCode_types[postal_types].add(postal_types)
+            postalCode_types[postal_types[:5]].add(postal_types[:5])
 
 #truncate everything past 5 chars for zipcode
 def audit_postalcode_scrub_zip():
@@ -53,7 +54,7 @@ def is_street_name(elem):
     return (elem.attrib['k'] == "addr:street")
 
 def is_postal_code(elem):
-    return (elem.attrib['k'] == "addr:postcode")
+    return (elem.attrib['k'] == "addr:postcode" or elem.attrib['k'] == "tiger:zip_right" or elem.attrib['k'] == "tiger:zip_left")
 
 def auditSteetNames():
     for event, elem in ET.iterparse(osm_file, events=("start",)):
@@ -65,13 +66,23 @@ def auditSteetNames():
 def auditPostalCodes():
     for event, elem in ET.iterparse(osm_file, events=("start",)):
         if elem.tag == "way": #linear feature (road, rivers, roads, highways
+            getIdForElement(elem.attrib['id'])
             for tag in elem.iter("tag"):
                 if is_postal_code(tag):
                     audit_postcode_type(postalCode_types,tag.attrib['v'])
 
 
-if __name__ == '__main__':
-    #auditSteetNames()
+#driver function for postal audit
+def mainPostalAuditFun():
     auditPostalCodes()
     audit_postalcode_scrub_zip()
     pprint.pprint(dict(postalCode_types))
+
+#get the id for the tag
+def getIdForElement(id):
+    print(id)
+
+
+if __name__ == '__main__':
+    mainPostalAuditFun()
+
